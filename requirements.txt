@@ -1,0 +1,10 @@
+numpy
+nibabel
+SimpleITK
+PyYAML
+scikit-learn
+scikit-image
+tqdm
+matplotlib
+lpips
+mlflow

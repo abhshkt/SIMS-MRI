@@ -1,0 +1,52 @@
+SETTINGS:
+  DIRECTORY: "./oasis"
+  PROJECT_NAME: "oasis_rotation_sigma10"
+  GPU_DEVICE: 0
+  NUM_WORKERS: 8
+
+DATASET:
+  SUBJECT_ID: "sub-OAS30433_ses-M066_run-02_T1w"
+  LR_CONTRAST1: "axial_LR" # fixed
+  LR_CONTRAST2: "rotated_coronal_LR" # moving
+
+TRAINING:
+  SEED: 12
+  BATCH_SIZE: 50000
+  LR: 0.0004
+  OPTIM: "Adam"
+  SHUFFLING: True
+  LOSS: "MSELoss"
+  # only one used at same time
+  USE_MI: False
+  USE_NMI: False
+  USE_CC: True
+  initial_generation_epochs: 15 #500 #50
+  registration_epochs: 15 #250 #30
+  generation_epochs: 15 #250 #40
+  VAL_FRACTION: 0.2
+  VAL_AXIS: 2
+  # Loss multipliers for different phases
+  PHASE1_LOSS_MULTIPLIER: 1.0 # Multiplier for initial generation phase
+  PHASE3_LOSS_MULTIPLIER: 1.0 # Multiplier for final mixed generation phase
+  EARLY_STOPPING:
+    ENABLED: True
+    PATIENCE: 5 #10 # epochs to wait before stopping
+    DELTA: 0.0005 #0.0001 # minimum improvement required
+    DELTA_FRACTION: 0.1 #0.02 # minimum improvement required as a fraction of the best loss
+    PATIENCE_REGISTRATION: 5 #15 # higher patience for registration phase
+    PATIENCE_FINAL: 5 #10 # patience for final mixed training
+    VERBOSE: True # print early stopping messages
+
+GENERATION_MODEL:
+  TYPE: "mlp"
+  # ENCODINGS
+  USE_SIREN: False
+  USE_WIRE_REAL: False
+  USE_FF: True
+  FF_SIGMA: 4
+  FF_MAPPING_SIZE: 512
+  FF_FACTOR: 1
+  FF_LEARNABLE_AMPLITUDES: False # Enable learnable frequency-wise amplitudes
+
+REGISTRATION_MODEL:
+  TYPE: "siren"

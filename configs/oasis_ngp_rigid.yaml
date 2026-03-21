@@ -1,0 +1,62 @@
+SETTINGS:
+  DIRECTORY: "./oasis_random"
+  PROJECT_NAME: "oasis_rotation_translation"
+  GPU_DEVICE: 0
+  NUM_WORKERS: 8
+
+DATASET:
+  SUBJECT_ID: "sub-OAS30433_ses-M066_run-02_T1w"
+  LR_CONTRAST1: "axial_LR" # fixed
+  LR_CONTRAST2: "rigid_coronal_LR" # moving
+
+TRAINING:
+  SEED: 12
+  BATCH_SIZE: 50000
+  LR: 0.0004
+  OPTIM: "Adam"
+  SHUFFLING: True
+  LOSS: "MSELoss"
+  # only one used at same time
+  USE_MI: False
+  USE_NMI: False
+  USE_CC: True
+  initial_generation_epochs: 50
+  registration_epochs: 50
+  generation_epochs: 50
+  VAL_FRACTION: 0.2
+  VAL_AXIS: 2
+  # Loss multipliers for different phases
+  PHASE1_LOSS_MULTIPLIER: 1.0
+  PHASE3_LOSS_MULTIPLIER: 1.0
+  EARLY_STOPPING:
+    ENABLED: True
+    PATIENCE: 5
+    DELTA: 0.0005
+    DELTA_FRACTION: 0.1
+    PATIENCE_REGISTRATION: 5
+    PATIENCE_FINAL: 5
+    VERBOSE: True
+
+GENERATION_MODEL:
+  TYPE: "mlp"
+  CONCAT_COORDS: True
+  USE_SIREN: False
+  USE_WIRE_REAL: False
+  USE_FF: False
+  FF_SIGMA: 4
+  FF_MAPPING_SIZE: 512
+  FF_FACTOR: 1
+  FF_LEARNABLE_AMPLITUDES: False
+  # Hash grid (NGP) encoding
+  HASH_N_LEVELS: 16
+  HASH_N_FEATURES_PER_LEVEL: 32
+  HASH_LOG2_SIZE: 19
+  HASH_BASE_RESOLUTION: 16
+  HASH_PER_LEVEL_SCALE: 1.203
+  PROGRESSIVE_HASH_UNLOCK: True
+  HASH_UNLOCK_END_FRACTION: 0.9
+
+REGISTRATION_MODEL:
+  TYPE: "siren"
+  REGULARIZATION: "bending"
+  ALPHA: 1000

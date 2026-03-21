@@ -1,0 +1,23 @@
+name: sims-mri
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+
+dependencies:
+  - python=3.10
+  - pytorch
+  - torchvision
+  - pytorch-cuda=12.1
+  - numpy
+  - nibabel
+  - simpleitk
+  - pyyaml
+  - scikit-learn
+  - scikit-image
+  - tqdm
+  - matplotlib
+  - pip
+  - pip:
+      - lpips
+      - mlflow

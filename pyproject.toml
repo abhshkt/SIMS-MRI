@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sims-mri"
+version = "0.1.0"
+description = "Single-Subject Multi-View MRI Super-Resolution via Implicit Neural Representations"
+requires-python = ">=3.10"
+license = "CC-BY-NC-SA-4.0"
+dependencies = [
+    "numpy",
+    "nibabel",
+    "SimpleITK",
+    "PyYAML",
+    "scikit-learn",
+    "scikit-image",
+    "tqdm",
+    "matplotlib",
+    "lpips",
+    "mlflow",
+    "pandas",
+]
+
+[project.scripts]
+sims-mri-train-phase1 = "sims_mri.training.phase1_generation:_cli"
+sims-mri-train-phase2 = "sims_mri.training.phase2_registration:_cli"
+sims-mri-train-phase3 = "sims_mri.training.phase3_mixed_training:_cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sims_mri"]
