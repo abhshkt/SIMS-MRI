@@ -186,16 +186,6 @@ def shorten_project_name(project_name: str) -> str:
     return short.replace("__", "_").strip("_")
 
 
-def format_number_short(val) -> str:
-    """Format numbers for filenames (no trailing zeros, '.' -> 'p')."""
-    try:
-        num = float(val)
-        formatted = f"{num:g}"
-    except (TypeError, ValueError):
-        return str(val)
-    return formatted.replace(".", "p")
-
-
 def extract_parent_id_from_path(checkpoint_path: str) -> str | None:
     """Extract the parent experiment ID from a runs/{id}/... checkpoint path."""
     match = re.search(r"runs[/\\]([^/\\]+)[/\\]", checkpoint_path)

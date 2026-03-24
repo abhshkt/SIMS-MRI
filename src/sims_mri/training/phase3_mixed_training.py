@@ -19,7 +19,6 @@ from IDIR.networks import networks
 from sims_mri.experiment_utils import (
     default_config_path,
     extract_parent_id_from_path,
-    format_number_short,
     generate_unique_id,
     get_image_frame,
     hash_ckpt_for,
@@ -116,15 +115,6 @@ def parse_args():
         type=float,
         default=None,
         help="Learning rate (default: from config).",
-    )
-    parser.add_argument(
-        "--phase3_loss_multiplier",
-        type=float,
-        default=None,
-        help=(
-            "Loss multiplier for Phase 3. Default: config.TRAINING.PHASE3_LOSS_MULTIPLIER if set, else 1.0. "
-            "CLI flag overrides config."
-        ),
     )
     parser.add_argument(
         "--clamp_coords",
@@ -273,20 +263,6 @@ def main(args):
         config.SETTINGS.PROJECT_NAME = args.project
         config_dict["SETTINGS"]["PROJECT_NAME"] = args.project
 
-    config_phase3_multiplier = (
-        config.TRAINING.PHASE3_LOSS_MULTIPLIER
-        if hasattr(config.TRAINING, "PHASE3_LOSS_MULTIPLIER")
-        else 1.0
-    )
-    phase3_multiplier = (
-        args.phase3_loss_multiplier
-        if args.phase3_loss_multiplier is not None
-        else config_phase3_multiplier
-    )
-    config.TRAINING.PHASE3_LOSS_MULTIPLIER = phase3_multiplier
-    if "TRAINING" in config_dict:
-        config_dict["TRAINING"]["PHASE3_LOSS_MULTIPLIER"] = phase3_multiplier
-
     # Set device
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -346,7 +322,6 @@ def main(args):
                     "batch_size": config.TRAINING.BATCH_SIZE,
                     "generation_epochs": config.TRAINING.generation_epochs,
                     "learning_rate": config.TRAINING.LR,
-                    "phase3_loss_multiplier": phase3_multiplier,
                     "clamp_coords": args.clamp_coords,
                     "hash_n_levels": args.hash_n_levels,
                     "hash_n_features_per_level": args.hash_n_features_per_level,
@@ -414,7 +389,6 @@ def main(args):
         "learning_rate",
         "batch_size",
         "generation_epochs",
-        "phase3_loss_multiplier",
         "clamp_coords",
         "hash_n_levels",
         "hash_n_features_per_level",
@@ -451,7 +425,6 @@ def main(args):
         "learning_rate": config.TRAINING.LR,
         "batch_size": config.TRAINING.BATCH_SIZE,
         "generation_epochs": config.TRAINING.generation_epochs,
-        "phase3_loss_multiplier": phase3_multiplier,
         "clamp_coords": args.clamp_coords,
         "hash_n_levels": args.hash_n_levels,
         "hash_n_features_per_level": args.hash_n_features_per_level,
@@ -649,15 +622,12 @@ def main(args):
 
     ################ PHASE 3: MIXED TRAINING #######################
     generation_epochs = config.TRAINING.generation_epochs
-    # phase3_multiplier resolved earlier from config default + CLI override
-
     print("=" * 60)
     print("Starting Phase 3 Mixed Generation Training...")
     print(f"  Epochs: {generation_epochs}")
     print(f"  Batch size: {config.TRAINING.BATCH_SIZE}")
     print(f"  Learning rate: {config.TRAINING.LR * 3}")
     print(f"  Loss: {config.TRAINING.LOSS}")
-    print(f"  Phase 3 loss multiplier: {phase3_multiplier}")
     if args.progressive_hash_unlock:
         print(f"  Progressive hash unlock: enabled (end fraction: {args.hash_unlock_end_fraction})")
     print("=" * 60)
@@ -725,8 +695,6 @@ def main(args):
 
             batch_metrics = {}
 
-            loss_batch = 0
-
             data1, label1 = d1
             data2, label2 = d2
 
@@ -764,7 +732,6 @@ def main(args):
             loss_mse2 = criterion(target2, contrast2_labels)
 
             loss = loss_mse1 + loss_mse2
-            loss = loss * phase3_multiplier
 
             optimizer_img.zero_grad()
             loss.backward()
@@ -778,7 +745,6 @@ def main(args):
                 batch_metrics.update({"mix_batch_loss": loss_batch})
                 batch_metrics.update({"mix_loss_mse1": loss_mse1.item()})
                 batch_metrics.update({"mix_loss_mse2": loss_mse2.item()})
-                batch_metrics.update({"phase3_loss_multiplier": phase3_multiplier})
 
                 # Log progressive hash unlock metrics
                 if args.progressive_hash_unlock:

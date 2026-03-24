@@ -18,7 +18,6 @@ from torch.utils.data import DataLoader
 from IDIR.networks import networks
 from sims_mri.experiment_utils import (
     default_config_path,
-    format_number_short,
     generate_unique_id,
     get_image_frame,
     hash_ckpt_for,
@@ -93,13 +92,6 @@ def parse_args():
         default=None,
         help="Alias for --epochs (for compatibility with multi_view_inr_hash_grid_mlflow.py).",
     )
-    parser.add_argument(
-        "--phase1_loss_multiplier",
-        type=float,
-        default=None,
-        help="Loss multiplier for phase 1 (initial generation)",
-    )
-
     # Hash grid encoder arguments
     parser.add_argument(
         "--hash_n_levels",
@@ -227,10 +219,6 @@ def main(args):
     if args.project is not None:
         config.SETTINGS.PROJECT_NAME = args.project
         config_dict["SETTINGS"]["PROJECT_NAME"] = args.project
-
-    if args.phase1_loss_multiplier is not None:
-        config.TRAINING.PHASE1_LOSS_MULTIPLIER = args.phase1_loss_multiplier
-        config_dict["TRAINING"]["PHASE1_LOSS_MULTIPLIER"] = args.phase1_loss_multiplier
 
     # Set device
     if torch.cuda.is_available():
@@ -599,7 +587,6 @@ def main(args):
             input_mapper.set_training_progress(current_step / total_steps)
 
             batch_metrics = {}
-            loss_batch = 0
 
             (data1, label1) = d1
             (data2, label2) = d2
@@ -619,19 +606,9 @@ def main(args):
             mse_target1 = target[: len(contrast1_data)]
             loss_mse = criterion(mse_target1, contrast1_labels)
 
-            phase1_multiplier = (
-                config.TRAINING.PHASE1_LOSS_MULTIPLIER
-                if hasattr(config.TRAINING, "PHASE1_LOSS_MULTIPLIER")
-                else 1.0
-            )
-            loss_mse = loss_mse * phase1_multiplier
-
             if args.logging:
                 img_step = epoch * len(train_dataloader) + batch_idx
                 batch_metrics.update({"img_loss": loss_mse.item()})
-                batch_metrics.update(
-                    {"phase1_loss_multiplier": phase1_multiplier}
-                )
 
                 # Log progressive hash unlock metrics
                 if args.progressive_hash_unlock:
