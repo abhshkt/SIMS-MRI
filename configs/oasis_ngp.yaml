@@ -1,7 +1,6 @@
 SETTINGS:
   DIRECTORY: "./oasis"
   PROJECT_NAME: "oasis_rotation_sigma10"
-  GPU_DEVICE: 0
   NUM_WORKERS: 8
 
 DATASET:
@@ -23,11 +22,6 @@ TRAINING:
   initial_generation_epochs: 50 #500 #50
   registration_epochs: 50 #250 #30
   generation_epochs: 50 #250 #40
-  VAL_FRACTION: 0.2
-  VAL_AXIS: 2
-  # Loss multipliers for different phases
-  PHASE1_LOSS_MULTIPLIER: 1.0 # Multiplier for initial generation phase
-  PHASE3_LOSS_MULTIPLIER: 1.0 # Multiplier for final mixed generation phase
   EARLY_STOPPING:
     ENABLED: True
     PATIENCE: 5 #10 # epochs to wait before stopping
@@ -39,14 +33,6 @@ TRAINING:
 
 GENERATION_MODEL:
   TYPE: "mlp"
-  # ENCODINGS
-  USE_SIREN: False
-  USE_WIRE_REAL: False
-  USE_FF: True
-  FF_SIGMA: 4
-  FF_MAPPING_SIZE: 512
-  FF_FACTOR: 1
-  FF_LEARNABLE_AMPLITUDES: False # Enable learnable frequency-wise amplitudes
 
 REGISTRATION_MODEL:
   TYPE: "siren"

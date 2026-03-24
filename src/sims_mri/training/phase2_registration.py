@@ -20,7 +20,6 @@ from IDIR.objectives import regularizers
 from sims_mri.experiment_utils import (
     default_config_path,
     extract_parent_id_from_path,
-    format_number_short,
     generate_unique_id,
     get_image_frame,
     hash_ckpt_for,
@@ -43,21 +42,6 @@ except ImportError:  # pragma: no cover
     mlflow = None
 
 
-
-def build_loss_tag(config):
-    """Build a compact tag for the configured base loss."""
-    base_loss = (
-        str(getattr(config.TRAINING, "LOSS", "loss")).lower().replace("loss", "")
-    )
-    extras = []
-    if getattr(config.TRAINING, "USE_MI", False):
-        extras.append("mi")
-    if getattr(config.TRAINING, "USE_NMI", False):
-        extras.append("nmi")
-    if getattr(config.TRAINING, "USE_CC", False):
-        extras.append("cc")
-    parts = [base_loss] + extras
-    return "_".join([p for p in parts if p])
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -776,7 +760,6 @@ def main(args):
                 input_mapper.set_training_progress(current_step / total_steps_phase1)
 
                 batch_metrics = {}
-                loss_batch = 0
 
                 (data1, label1) = d1
                 (data2, label2) = d2
@@ -796,17 +779,9 @@ def main(args):
                 mse_target1 = target[: len(contrast1_data)]
                 loss_mse = criterion(mse_target1, contrast1_labels)
 
-                phase1_multiplier = (
-                    config.TRAINING.PHASE1_LOSS_MULTIPLIER
-                    if hasattr(config.TRAINING, "PHASE1_LOSS_MULTIPLIER")
-                    else 1.0
-                )
-                loss_mse = loss_mse * phase1_multiplier
-
                 if args.logging:
                     img_step = epoch * len(train_dataloader) + batch_idx
                     batch_metrics.update({"img_loss": loss_mse.item()})
-                    batch_metrics.update({"phase1_loss_multiplier": phase1_multiplier})
 
                     # Log progressive hash unlock metrics
                     if args.progressive_hash_unlock:
@@ -992,7 +967,6 @@ def main(args):
 
         for batch_idx, (d1, d2) in enumerate(train_dataloader):
             batch_metrics = {}
-            loss_batch = 0
 
             (data1, label1) = d1
             (data2, label2) = d2

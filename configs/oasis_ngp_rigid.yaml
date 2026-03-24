@@ -1,7 +1,6 @@
 SETTINGS:
   DIRECTORY: "./oasis_random"
   PROJECT_NAME: "oasis_rotation_translation"
-  GPU_DEVICE: 0
   NUM_WORKERS: 8
 
 DATASET:
@@ -23,11 +22,6 @@ TRAINING:
   initial_generation_epochs: 50
   registration_epochs: 50
   generation_epochs: 50
-  VAL_FRACTION: 0.2
-  VAL_AXIS: 2
-  # Loss multipliers for different phases
-  PHASE1_LOSS_MULTIPLIER: 1.0
-  PHASE3_LOSS_MULTIPLIER: 1.0
   EARLY_STOPPING:
     ENABLED: True
     PATIENCE: 5
@@ -40,13 +34,6 @@ TRAINING:
 GENERATION_MODEL:
   TYPE: "mlp"
   CONCAT_COORDS: True
-  USE_SIREN: False
-  USE_WIRE_REAL: False
-  USE_FF: False
-  FF_SIGMA: 4
-  FF_MAPPING_SIZE: 512
-  FF_FACTOR: 1
-  FF_LEARNABLE_AMPLITUDES: False
   # Hash grid (NGP) encoding
   HASH_N_LEVELS: 16
   HASH_N_FEATURES_PER_LEVEL: 32

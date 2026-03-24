@@ -6,6 +6,8 @@ Representations_.
 
 ## Method Overview
 
+![Overview of the three-phase SIMS-MRI framework](assets/overview.png)
+
 We propose a three-stage single-subject pipeline:
 
 1. Phase 1 fits an implicit image model to one anisotropic input view.
