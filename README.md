@@ -158,3 +158,19 @@ You can also run the modules directly:
 ```bash
 uv run python -m sims_mri.training.phase1_generation --help
 ```
+
+## Citation
+
+If you use SIMS-MRI in your work, please cite the following paper:
+
+```bibtex
+@misc{kim2026singlesubjectmultiviewmrisuperresolution,
+      title={Single-Subject Multi-View MRI Super-Resolution via Implicit Neural Representations},
+      author={Heejong Kim and Abhishek Thanki and Roel van Herten and Daniel Margolis and Mert R Sabuncu},
+      year={2026},
+      eprint={2603.22627},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2603.22627},
+}
+```
