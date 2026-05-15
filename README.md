@@ -1,8 +1,8 @@
 # Single-Subject Multi-View MRI Super-Resolution via Implicit Neural Representations
 
 This repository contains code for the SIMS-MRI pipeline described in the paper
-_Single-Subject Multi-View MRI Super-Resolution via Implicit Neural
-Representations_.
+[_Single-Subject Multi-View MRI Super-Resolution via Implicit Neural
+Representations_](https://arxiv.org/abs/2603.22627).
 
 ## Method Overview
 
